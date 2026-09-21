@@ -1,0 +1,17 @@
+<%- include('../partials/head') %>
+<main class="login-wrap" dir="ltr">
+  <form class="login-card" method="post" action="<%= adminBase %>/login" autocomplete="off">
+    <h1>Admin login</h1>
+    <p class="muted">Only the site owner can write, edit or delete posts.</p>
+    <% if (locals.error) { %><p class="alert alert-error" role="alert"><%= error %></p><% } %>
+    <label for="password">Password</label>
+    <input id="password" name="password" type="password" required autofocus autocomplete="current-password">
+    <label class="check"><input type="checkbox" name="remember"> Keep me logged in for 30 days on this device</label>
+    <button class="btn btn-primary" type="submit">Log in</button>
+    <p class="back"><a href="/">&larr; Back to the website</a></p>
+  </form>
+  <div class="login-theme"><%- include('../partials/theme-toggle') %></div>
+</main>
+<script src="<%= asset('/js/main.js') %>" defer></script>
+</body>
+</html>

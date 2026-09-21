@@ -1,0 +1,18 @@
+<% var sec = sectionBySlug[p.section] || { nav: p.section, color: '#555' }; %>
+<article class="entry<%= p.cover_url ? ' has-cover' : '' %>" style="--c: <%= sec.color %>" lang="<%= p.lang %>">
+  <a class="entry-link" href="<%= postUrl(p) %>">
+    <div class="entry-body">
+      <div class="entry-top">
+        <span class="chip"><%= sec.nav %></span>
+        <% if (p.status === 'draft') { %><span class="badge">مسودہ</span><% } %>
+      </div>
+      <h3 class="entry-title"><%= p.title %></h3>
+      <% if (p.excerpt) { %><p class="entry-excerpt"><%= p.excerpt %></p><% } %>
+      <div class="entry-meta">
+        <time datetime="<%= iso(p.created_at) %>"><%= dateUr(p.created_at) %></time>
+        <span><%= p.read_min %> منٹ کا مطالعہ</span>
+      </div>
+    </div>
+    <% if (p.cover_url) { %><img class="entry-cover" src="<%= p.cover_url %>" alt="" loading="lazy" decoding="async"><% } %>
+  </a>
+</article>

@@ -1,0 +1,16 @@
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <div class="footer-brand">
+      <strong><%= siteTitle %></strong>
+      <p><%= siteTagline %></p>
+    </div>
+    <ul class="footer-links">
+      <% sections.forEach(function(s){ %><li><a href="/section/<%= s.slug %>"><%= s.nav %></a></li><% }) %>
+      <li><a href="/about">تعارف</a></li>
+    </ul>
+  </div>
+  <div class="container footer-copy">© <%= new Date().getFullYear() %> <%= siteTitle %></div>
+</footer>
+<script src="<%= asset('/js/main.js') %>" defer></script>
+</body>
+</html>

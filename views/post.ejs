@@ -1,0 +1,60 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<div class="progress" id="progress" aria-hidden="true"></div>
+<% if (isAdmin) { %>
+<div class="admin-strip" dir="ltr">
+  <span>You are logged in as admin<% if (post.status === 'draft') { %> &mdash; <strong>this post is a draft, only you can see it</strong><% } %></span>
+  <a href="<%= adminBase %>/posts/<%= post.id %>/edit">Edit this post</a>
+  <a href="<%= adminBase %>">Dashboard</a>
+</div>
+<% } %>
+<main id="main" class="container-read">
+  <article class="post" style="--c: <%= section ? section.color : '#555' %>">
+    <header class="post-head">
+      <div class="post-kicker">
+        <% if (section) { %><a class="chip" href="/section/<%= section.slug %>"><%= section.nav %></a><% } %>
+        <% if (post.status === 'draft') { %><span class="badge">مسودہ</span><% } %>
+      </div>
+      <h1 class="post-title" lang="<%= post.lang %>"><%= post.title %></h1>
+      <div class="post-meta">
+        <time datetime="<%= iso(post.created_at) %>"><%= dateUr(post.created_at) %></time>
+        <span><%= post.read_min %> منٹ کا مطالعہ</span>
+        <span><%= post.views %> مرتبہ پڑھا گیا</span>
+      </div>
+      <div class="reader-tools" role="group" aria-label="پڑھنے کی سہولت">
+        <button type="button" data-size="-2" aria-label="حروف چھوٹے کریں" title="حروف چھوٹے کریں" dir="ltr">A−</button>
+        <button type="button" data-size="2" aria-label="حروف بڑے کریں" title="حروف بڑے کریں" dir="ltr">A+</button>
+        <% if (post.lang === 'ur') { %>
+        <button type="button" id="face-toggle" class="face-btn" aria-label="خط تبدیل کریں" title="خط تبدیل کریں">
+          <span class="when-nastaliq">نسخ خط</span><span class="when-naskh">نستعلیق خط</span>
+        </button>
+        <% } %>
+      </div>
+    </header>
+
+    <% if (post.cover_url) { %><figure class="post-cover"><img src="<%= post.cover_url %>" alt="" decoding="async"></figure><% } %>
+
+    <div class="prose" lang="<%= post.lang %>" dir="rtl"><%- post.content %></div>
+
+    <% if (post.download_url) { %>
+    <p class="post-download"><a class="btn btn-primary" href="<%= post.download_url %>" target="_blank" rel="noopener noreferrer">کتاب کھولیں / ڈاؤن لوڈ کریں</a></p>
+    <% } %>
+
+    <div class="share">
+      <span>شیئر کریں:</span>
+      <a class="btn btn-quiet" target="_blank" rel="noopener noreferrer"
+         href="https://wa.me/?text=<%= encodeURIComponent(post.title + ' ' + siteUrl + postUrl(post)) %>">واٹس ایپ</a>
+      <button type="button" class="btn btn-quiet" id="copy-link" data-url="<%= siteUrl + postUrl(post) %>"><span class="copy-idle">لنک کاپی کریں</span><span class="copy-done">کاپی ہو گیا</span></button>
+    </div>
+  </article>
+
+  <% if (related.length) { %>
+  <section class="related" aria-labelledby="rel-h">
+    <h2 id="rel-h" class="block-title">اسی موضوع سے مزید</h2>
+    <div class="entries">
+      <% related.forEach(function(p){ %><%- include('partials/entry', { p: p }) %><% }) %>
+    </div>
+  </section>
+  <% } %>
+</main>
+<%- include('partials/footer') %>

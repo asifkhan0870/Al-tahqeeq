@@ -1,0 +1,23 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<main id="main">
+  <section class="container latest search-page">
+    <h1 class="block-title">تلاش</h1>
+    <form class="search search-big" action="/search" method="get" role="search">
+      <input type="search" name="q" placeholder="عنوان یا متن میں تلاش کریں…" aria-label="تلاش" maxlength="100" value="<%= q %>" autofocus>
+      <button type="submit" class="btn btn-primary">تلاش</button>
+    </form>
+    <% if (q) { %>
+      <p class="search-note"><strong><%= result.total %></strong> نتائج ملے: «<%= q %>»</p>
+      <% if (result.rows.length) { %>
+        <div class="entries">
+          <% result.rows.forEach(function(p){ %><%- include('partials/entry', { p: p }) %><% }) %>
+        </div>
+        <%- include('partials/pagination') %>
+      <% } else { %>
+        <div class="empty"><p>کوئی نتیجہ نہیں ملا۔ کسی اور لفظ سے تلاش کر کے دیکھیں۔</p></div>
+      <% } %>
+    <% } %>
+  </section>
+</main>
+<%- include('partials/footer') %>

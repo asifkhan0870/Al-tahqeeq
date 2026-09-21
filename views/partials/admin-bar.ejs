@@ -1,0 +1,17 @@
+<header class="admin-top" dir="ltr">
+  <div class="admin-top-inner">
+    <a class="admin-logo" href="<%= adminBase %>">Admin panel</a>
+    <nav class="admin-nav" aria-label="Admin">
+      <a href="<%= adminBase %>">All posts</a>
+      <a href="<%= adminBase %>/posts/new">New post</a>
+      <a href="/" target="_blank" rel="noopener">View site</a>
+    </nav>
+    <div class="admin-actions">
+      <%- include('theme-toggle') %>
+      <form method="post" action="<%= adminBase %>/logout">
+        <input type="hidden" name="_csrf" value="<%= csrf %>">
+        <button class="btn btn-quiet" type="submit">Log out</button>
+      </form>
+    </div>
+  </div>
+</header>

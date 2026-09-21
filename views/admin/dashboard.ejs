@@ -1,0 +1,72 @@
+<%- include('../partials/head') %>
+<%- include('../partials/admin-bar') %>
+<main class="admin-main" dir="ltr">
+  <% if (flash) { %><p class="alert alert-ok" role="status"><%= flash %></p><% } %>
+
+  <div class="page-head">
+    <h1>All posts</h1>
+    <a class="btn btn-primary" href="<%= adminBase %>/posts/new">+ New post</a>
+  </div>
+
+  <div class="stats">
+    <div><strong><%= stats.total %></strong><span>Total posts</span></div>
+    <div><strong><%= stats.published %></strong><span>Published</span></div>
+    <div><strong><%= stats.drafts %></strong><span>Drafts</span></div>
+    <div><strong><%= stats.views %></strong><span>Total views</span></div>
+  </div>
+
+  <form class="filters" method="get" action="<%= adminBase %>">
+    <input type="search" name="q" placeholder="Search title or text…" value="<%= filters.q %>" dir="auto">
+    <select name="section" aria-label="Section">
+      <option value="">All sections</option>
+      <% sections.forEach(function(s){ %><option value="<%= s.slug %>"<%= filters.section === s.slug ? ' selected' : '' %>><%= s.sub %> (<%= s.nav %>)</option><% }) %>
+    </select>
+    <select name="status" aria-label="Status">
+      <option value="">Any status</option>
+      <option value="published"<%= filters.status === 'published' ? ' selected' : '' %>>Published</option>
+      <option value="draft"<%= filters.status === 'draft' ? ' selected' : '' %>>Draft</option>
+    </select>
+    <button class="btn" type="submit">Filter</button>
+    <% if (filters.q || filters.section || filters.status) { %><a class="btn btn-quiet" href="<%= adminBase %>">Clear</a><% } %>
+  </form>
+
+  <% if (!result.rows.length) { %>
+    <div class="empty" dir="ltr"><p>No posts found.</p></div>
+  <% } else { %>
+  <div class="table-wrap">
+    <table class="posts-table">
+      <thead>
+        <tr><th>Title</th><th>Section</th><th>Lang</th><th>Status</th><th>Updated</th><th>Views</th><th class="actions-col">Actions</th></tr>
+      </thead>
+      <tbody>
+        <% result.rows.forEach(function(p){ var sec = sectionBySlug[p.section]; %>
+        <tr>
+          <td class="t-title" dir="rtl" lang="<%= p.lang %>"><a href="<%= adminBase %>/posts/<%= p.id %>/edit"><%= p.title %></a></td>
+          <td><span class="dot" style="background: <%= sec ? sec.color : '#888' %>"></span><%= sec ? sec.sub : p.section %></td>
+          <td><%= p.lang === 'ar' ? 'Arabic' : 'Urdu' %></td>
+          <td><span class="status status-<%= p.status %>"><%= p.status === 'published' ? 'Published' : 'Draft' %></span></td>
+          <td class="nowrap"><%= dateEn(p.updated_at) %></td>
+          <td><%= p.views %></td>
+          <td class="actions">
+            <a href="<%= postUrl(p) %>" target="_blank" rel="noopener">View</a>
+            <a href="<%= adminBase %>/posts/<%= p.id %>/edit">Edit</a>
+            <form method="post" action="<%= adminBase %>/posts/<%= p.id %>/toggle">
+              <input type="hidden" name="_csrf" value="<%= csrf %>">
+              <button type="submit" class="linklike"><%= p.status === 'published' ? 'Unpublish' : 'Publish' %></button>
+            </form>
+            <form method="post" action="<%= adminBase %>/posts/<%= p.id %>/delete" data-confirm="Delete this post permanently? This cannot be undone.">
+              <input type="hidden" name="_csrf" value="<%= csrf %>">
+              <button type="submit" class="linklike danger">Delete</button>
+            </form>
+          </td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+  <div dir="ltr"><%- include('../partials/pagination') %></div>
+  <% } %>
+</main>
+<script src="<%= asset('/js/main.js') %>" defer></script>
+</body>
+</html>

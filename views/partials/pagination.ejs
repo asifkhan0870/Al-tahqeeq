@@ -1,0 +1,7 @@
+<% if (pager && pager.pages > 1) { %>
+<nav class="pagination" aria-label="صفحات">
+  <% if (pager.page > 1) { %><a class="pg" rel="prev" href="<%= pager.url(pager.page - 1) %>">پچھلا</a><% } %>
+  <span class="pg-status"><%= pager.page %> / <%= pager.pages %></span>
+  <% if (pager.page < pager.pages) { %><a class="pg" rel="next" href="<%= pager.url(pager.page + 1) %>">اگلا</a><% } %>
+</nav>
+<% } %>

@@ -1,0 +1,44 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<main id="main">
+<% if (result.page === 1) { %>
+  <section class="hero">
+    <div class="container hero-inner">
+      <p class="basmala" lang="ar">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</p>
+      <h1 class="hero-title"><%= siteTitle %></h1>
+      <p class="hero-tagline"><%= siteTagline %></p>
+    </div>
+  </section>
+
+  <section class="container topics" aria-labelledby="topics-h">
+    <h2 id="topics-h" class="block-title">موضوعات</h2>
+    <ul class="topic-list">
+      <% sections.forEach(function(s){ %>
+      <li style="--c: <%= s.color %>">
+        <a href="/section/<%= s.slug %>">
+          <span class="topic-name"><%= s.nav %> <small dir="ltr"><%= s.sub %></small></span>
+          <span class="topic-desc"><%= s.desc %></span>
+          <span class="topic-count"><%= counts[s.slug] || 0 %> تحریریں</span>
+        </a>
+      </li>
+      <% }) %>
+    </ul>
+  </section>
+<% } %>
+
+  <section class="container latest" aria-labelledby="latest-h">
+    <h2 id="latest-h" class="block-title">تازہ تحریریں</h2>
+    <% if (!result.rows.length) { %>
+      <div class="empty">
+        <p>ابھی کوئی تحریر شائع نہیں ہوئی۔</p>
+        <% if (isAdmin) { %><p dir="ltr"><a class="btn btn-primary" href="<%= adminBase %>/posts/new">Write your first post</a></p><% } %>
+      </div>
+    <% } else { %>
+      <div class="entries">
+        <% result.rows.forEach(function(p){ %><%- include('partials/entry', { p: p }) %><% }) %>
+      </div>
+      <%- include('partials/pagination') %>
+    <% } %>
+  </section>
+</main>
+<%- include('partials/footer') %>

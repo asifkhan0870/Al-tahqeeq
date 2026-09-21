@@ -1,0 +1,25 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<main id="main">
+  <section class="section-hero" style="--c: <%= section.color %>">
+    <div class="container">
+      <h1 class="section-title"><%= section.title %></h1>
+      <p class="section-desc"><%= section.desc %></p>
+      <p class="section-count"><%= result.total %> تحریریں</p>
+    </div>
+  </section>
+  <section class="container latest">
+    <% if (!result.rows.length) { %>
+      <div class="empty">
+        <p>اس موضوع میں ابھی کوئی تحریر شائع نہیں ہوئی۔</p>
+        <% if (isAdmin) { %><p dir="ltr"><a class="btn btn-primary" href="<%= adminBase %>/posts/new?section=<%= section.slug %>">Add a post here</a></p><% } %>
+      </div>
+    <% } else { %>
+      <div class="entries">
+        <% result.rows.forEach(function(p){ %><%- include('partials/entry', { p: p }) %><% }) %>
+      </div>
+      <%- include('partials/pagination') %>
+    <% } %>
+  </section>
+</main>
+<%- include('partials/footer') %>

@@ -1,0 +1,87 @@
+<%- include('../partials/head') %>
+<%- include('../partials/admin-bar') %>
+<main class="admin-main" dir="ltr">
+  <div class="page-head">
+    <h1><%= post.id ? 'Edit post' : 'New post' %></h1>
+    <% if (post.id) { %><a class="btn btn-quiet" href="<%= postUrl(post) %>" target="_blank" rel="noopener">View on site</a><% } %>
+  </div>
+
+  <% if (locals.error) { %><p class="alert alert-error" role="alert"><%= error %></p><% } %>
+  <p class="alert alert-ok" id="flash" role="status" hidden></p>
+
+  <form method="post" id="post-form" action="<%= post.id ? adminBase + '/posts/' + post.id : adminBase + '/posts' %>">
+    <input type="hidden" name="_csrf" value="<%= csrf %>">
+    <input type="hidden" name="content" id="content-input">
+
+    <div class="editor-layout">
+      <div class="editor-main">
+        <label for="title">Title</label>
+        <input id="title" name="title" class="title-input" type="text" dir="rtl" required maxlength="300" value="<%= post.title %>" placeholder="عنوان یہاں لکھیں">
+
+        <label for="editor" class="mt">Article</label>
+        <div class="editor-wrap lang-<%= post.lang %>" id="editor-wrap">
+          <div id="editor" dir="rtl"></div>
+        </div>
+        <textarea id="initial-content" hidden><%= post.content %></textarea>
+        <p class="hint">Tip: select text and use the <b>Font</b> menu to switch a verse to <b>Arabic (Naskh)</b>. Use the link button (chain icon) to add a link. Use <b>LTR</b> for an English paragraph.</p>
+      </div>
+
+      <aside class="editor-side">
+        <div class="box">
+          <h2>Publish</h2>
+          <label for="status">Status</label>
+          <select id="status" name="status">
+            <option value="published"<%= post.status === 'published' ? ' selected' : '' %>>Published (visible to everyone)</option>
+            <option value="draft"<%= post.status === 'draft' ? ' selected' : '' %>>Draft (only you can see it)</option>
+          </select>
+
+          <label for="section">Section</label>
+          <select id="section" name="section" required>
+            <% sections.forEach(function(s){ %><option value="<%= s.slug %>"<%= post.section === s.slug ? ' selected' : '' %>><%= s.sub %> — <%= s.nav %></option><% }) %>
+          </select>
+
+          <fieldset>
+            <legend>Main language</legend>
+            <label class="check"><input type="radio" name="lang" value="ur"<%= post.lang !== 'ar' ? ' checked' : '' %>> Urdu (Nastaliq)</label>
+            <label class="check"><input type="radio" name="lang" value="ar"<%= post.lang === 'ar' ? ' checked' : '' %>> Arabic (Naskh)</label>
+          </fieldset>
+
+          <button class="btn btn-primary block" type="submit"><%= post.id ? 'Save changes' : 'Save post' %></button>
+        </div>
+
+        <div class="box">
+          <h2>Extras</h2>
+          <label for="excerpt">Short summary <span class="muted">(optional, shown in lists)</span></label>
+          <textarea id="excerpt" name="excerpt" rows="3" dir="rtl" maxlength="400"><%= post.excerpt %></textarea>
+
+          <label for="cover_url">Cover image link <span class="muted">(optional)</span></label>
+          <input id="cover_url" name="cover_url" type="url" placeholder="https://…" value="<%= post.cover_url %>">
+
+          <label for="download_url">Book / PDF link <span class="muted">(optional, shows a button)</span></label>
+          <input id="download_url" name="download_url" type="url" placeholder="https://…" value="<%= post.download_url %>">
+
+          <label for="slug">English link name <span class="muted">(optional)</span></label>
+          <input id="slug" name="slug" type="text" maxlength="80" placeholder="e.g. tafseer-surah-fatiha" value="<%= post.slug %>">
+        </div>
+
+        <% if (post.id) { %>
+        <div class="box danger-zone">
+          <h2>Delete</h2>
+          <button class="btn btn-danger block" type="submit" form="delete-form">Delete this post</button>
+        </div>
+        <% } %>
+      </aside>
+    </div>
+  </form>
+
+  <% if (post.id) { %>
+  <form id="delete-form" method="post" action="<%= adminBase %>/posts/<%= post.id %>/delete" data-confirm="Delete this post permanently? This cannot be undone.">
+    <input type="hidden" name="_csrf" value="<%= csrf %>">
+  </form>
+  <% } %>
+</main>
+<script src="<%= asset('/vendor/quill/quill.min.js') %>"></script>
+<script src="<%= asset('/js/admin-editor.js') %>"></script>
+<script src="<%= asset('/js/main.js') %>" defer></script>
+</body>
+</html>
