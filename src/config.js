@@ -48,7 +48,7 @@ module.exports = {
   isProd,
   port,
   siteUrl: (env.SITE_URL || `http://localhost:${port}`).replace(/\/+$/, ''),
-  siteTitle: env.SITE_TITLE || 'علمی و تحقیقی بلاگ',
+  siteTitle: env.SITE_TITLE || 'مکالمہ',
   siteTagline: env.SITE_TAGLINE || 'قرآن، حدیث اور فکری مباحث پر تحقیقی تحریریں',
   adminPath,
   adminPassword: env.ADMIN_PASSWORD,
