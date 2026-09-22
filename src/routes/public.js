@@ -3,6 +3,7 @@ const config = require('../config');
 const sections = require('../../config/sections');
 const posts = require('../models/posts');
 const { cleanContent } = require('../utils/text');
+const dailyContent = require('../services/dailyContent');
 
 const router = express.Router();
 const sectionBySlug = Object.fromEntries(sections.map((s) => [s.slug, s]));
@@ -18,15 +19,25 @@ function pager(result, makeUrl) {
 // ---------------------------------------------------------------- Home
 router.get('/', async (req, res) => {
   const page = pageNum(req.query.page);
-  const [result, counts] = await Promise.all([
-    posts.list({ status: 'published', page, perPage: config.perPage }),
+
+  const [result, counts, daily] = await Promise.all([
+    posts.list({
+      status: 'published',
+      page,
+      perPage: config.perPage,
+    }),
+
     posts.countsBySection(),
+
+    dailyContent.getToday(),
   ]);
+
   res.render('index', {
     pageTitle: null,
     canonical: '/' + (result.page > 1 ? `?page=${result.page}` : ''),
     result,
     counts,
+    daily,
     pager: pager(result, (n) => (n === 1 ? '/' : `/?page=${n}`)),
   });
 });
