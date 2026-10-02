@@ -1,87 +1,752 @@
 <%- include('../partials/head') %>
-<%- include('../partials/admin-bar') %>
-<main class="admin-main" dir="ltr">
-  <div class="page-head">
-    <h1><%= post.id ? 'Edit post' : 'New post' %></h1>
-    <% if (post.id) { %><a class="btn btn-quiet" href="<%= postUrl(post) %>" target="_blank" rel="noopener">View on site</a><% } %>
-  </div>
 
-  <% if (locals.error) { %><p class="alert alert-error" role="alert"><%= error %></p><% } %>
-  <p class="alert alert-ok" id="flash" role="status" hidden></p>
+<div class="admin-app-shell">
 
-  <form method="post" id="post-form" action="<%= post.id ? adminBase + '/posts/' + post.id : adminBase + '/posts' %>">
-    <input type="hidden" name="_csrf" value="<%= csrf %>">
-    <input type="hidden" name="content" id="content-input">
+  <%- include('../partials/admin-bar') %>
 
-    <div class="editor-layout">
-      <div class="editor-main">
-        <label for="title">Title</label>
-        <input id="title" name="title" class="title-input" type="text" dir="rtl" required maxlength="300" value="<%= post.title %>" placeholder="عنوان یہاں لکھیں">
+  <main class="admin-editor-page">
 
-        <label for="editor" class="mt">Article</label>
-        <div class="editor-wrap lang-<%= post.lang %>" id="editor-wrap">
-          <div id="editor" dir="rtl"></div>
+    <!-- =====================================================
+         PAGE HEADER
+         ===================================================== -->
+
+    <header class="editor-page-header">
+
+      <div class="editor-heading">
+
+        <a
+          href="<%= adminBase %>"
+          class="editor-back"
+          aria-label="Back to dashboard"
+        >
+          <svg viewBox="0 0 24 24">
+            <path d="m14.7 5.3-1.4-1.4L5.2 12l8.1 8.1 1.4-1.4L9 13h10v-2H9l5.7-5.7Z"/>
+          </svg>
+        </a>
+
+        <div>
+
+          <div class="editor-eyebrow">
+            <%= post.id ? 'EDIT PUBLICATION' : 'NEW PUBLICATION' %>
+          </div>
+
+          <h1>
+            <%= post.id ? 'Edit post' : 'Create new post' %>
+          </h1>
+
+          <p>
+            Write, format and publish your Urdu or Arabic article.
+          </p>
+
         </div>
-        <textarea id="initial-content" hidden><%= post.content %></textarea>
-        <p class="hint">Tip: select text and use the <b>Font</b> menu to switch a verse to <b>Arabic (Naskh)</b>. Use the link button (chain icon) to add a link. Use <b>LTR</b> for an English paragraph.</p>
+
       </div>
 
-      <aside class="editor-side">
-        <div class="box">
-          <h2>Publish</h2>
-          <label for="status">Status</label>
-          <select id="status" name="status">
-            <option value="published"<%= post.status === 'published' ? ' selected' : '' %>>Published (visible to everyone)</option>
-            <option value="draft"<%= post.status === 'draft' ? ' selected' : '' %>>Draft (only you can see it)</option>
-          </select>
+      <div class="editor-header-actions">
 
-          <label for="section">Section</label>
-          <select id="section" name="section" required>
-            <% sections.forEach(function(s){ %><option value="<%= s.slug %>"<%= post.section === s.slug ? ' selected' : '' %>><%= s.sub %> — <%= s.nav %></option><% }) %>
-          </select>
-
-          <fieldset>
-            <legend>Main language</legend>
-            <label class="check"><input type="radio" name="lang" value="ur"<%= post.lang !== 'ar' ? ' checked' : '' %>> Urdu (Nastaliq)</label>
-            <label class="check"><input type="radio" name="lang" value="ar"<%= post.lang === 'ar' ? ' checked' : '' %>> Arabic (Naskh)</label>
-          </fieldset>
-
-          <button class="btn btn-primary block" type="submit"><%= post.id ? 'Save changes' : 'Save post' %></button>
-        </div>
-
-        <div class="box">
-          <h2>Extras</h2>
-          <label for="excerpt">Short summary <span class="muted">(optional, shown in lists)</span></label>
-          <textarea id="excerpt" name="excerpt" rows="3" dir="rtl" maxlength="400"><%= post.excerpt %></textarea>
-
-          <label for="cover_url">Cover image link <span class="muted">(optional)</span></label>
-          <input id="cover_url" name="cover_url" type="url" placeholder="https://…" value="<%= post.cover_url %>">
-
-          <label for="download_url">Book / PDF link <span class="muted">(optional, shows a button)</span></label>
-          <input id="download_url" name="download_url" type="url" placeholder="https://…" value="<%= post.download_url %>">
-
-          <label for="slug">English link name <span class="muted">(optional)</span></label>
-          <input id="slug" name="slug" type="text" maxlength="80" placeholder="e.g. tafseer-surah-fatiha" value="<%= post.slug %>">
-        </div>
+        <a
+          href="<%= adminBase %>"
+          class="editor-secondary-btn"
+        >
+          Cancel
+        </a>
 
         <% if (post.id) { %>
-        <div class="box danger-zone">
-          <h2>Delete</h2>
-          <button class="btn btn-danger block" type="submit" form="delete-form">Delete this post</button>
-        </div>
-        <% } %>
-      </aside>
-    </div>
-  </form>
 
-  <% if (post.id) { %>
-  <form id="delete-form" method="post" action="<%= adminBase %>/posts/<%= post.id %>/delete" data-confirm="Delete this post permanently? This cannot be undone.">
-    <input type="hidden" name="_csrf" value="<%= csrf %>">
-  </form>
-  <% } %>
-</main>
-<script src="<%= asset('/vendor/quill/quill.min.js') %>"></script>
-<script src="<%= asset('/js/admin-editor.js') %>"></script>
-<script src="<%= asset('/js/main.js') %>" defer></script>
+          <a
+            href="/post/<%= post.slug || post.id %>"
+            target="_blank"
+            rel="noopener"
+            class="editor-preview-btn"
+          >
+            <svg viewBox="0 0 24 24">
+              <path d="M12 5c-5.5 0-9.5 5-10 7 .5 2 4.5 7 10 7s9.5-5 10-7c-.5-2-4.5-7-10-7Zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10Z"/>
+              <circle cx="12" cy="12" r="2"/>
+            </svg>
+            Preview
+          </a>
+
+        <% } %>
+
+      </div>
+
+    </header>
+
+
+    <% if (locals.error) { %>
+
+      <div class="editor-alert editor-alert-error">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 3 2.8 20h18.4L12 3Zm0 5.2 5.8 10.6H6.2L12 8.2Zm-1 3v4h2v-4h-2Zm0 5v2h2v-2h-2Z"/>
+        </svg>
+
+        <span><%= error %></span>
+      </div>
+
+    <% } %>
+
+
+    <!-- =====================================================
+         MAIN FORM
+         ===================================================== -->
+
+    <form
+      id="postForm"
+      class="editor-form"
+      method="post"
+      action="<%= post.id
+        ? adminBase + '/posts/' + post.id
+        : adminBase + '/posts'
+      %>"
+    >
+
+      <input
+        type="hidden"
+        name="_csrf"
+        value="<%= csrf %>"
+      >
+
+      <input
+        type="hidden"
+        name="content"
+        id="content"
+      >
+
+
+      <div class="editor-grid">
+
+        <!-- =================================================
+             MAIN CONTENT
+             ================================================= -->
+
+        <section class="editor-main">
+
+          <!-- Title -->
+
+          <div class="editor-card editor-title-card">
+
+            <div class="editor-card-label">
+              Article title
+            </div>
+
+            <input
+              id="title"
+              name="title"
+              class="article-title-input"
+              type="text"
+              maxlength="300"
+              required
+              dir="<%= post.lang === 'ar' ? 'rtl' : 'rtl' %>"
+              value="<%= post.title || '' %>"
+              placeholder="عنوان یہاں لکھیں..."
+              autocomplete="off"
+            >
+
+            <div class="title-meta">
+              <span>
+                Urdu / Arabic title
+              </span>
+
+              <span id="titleCount">
+                <%= (post.title || '').length %> / 300
+              </span>
+            </div>
+
+          </div>
+
+
+          <!-- =================================================
+               ARTICLE EDITOR
+               ================================================= -->
+
+          <div class="editor-card article-editor-card">
+
+            <div class="article-editor-header">
+
+              <div>
+
+                <div class="editor-card-label">
+                  Article content
+                </div>
+
+                <div class="editor-card-help">
+                  Write your article using the full Urdu/Arabic formatting tools.
+                </div>
+
+              </div>
+
+              <div
+                id="saveState"
+                class="save-state"
+              >
+                <span class="save-state-dot"></span>
+                <span class="save-state-text">
+                  Ready
+                </span>
+              </div>
+
+            </div>
+
+
+            <!-- Hidden initial content -->
+
+            <textarea
+              id="initialContent"
+              hidden
+            ><%- post.content || '' %></textarea>
+
+
+            <!-- Quill -->
+
+            <div
+              id="editor"
+              class="modern-quill-editor"
+              data-lang="<%= post.lang || 'ur' %>"
+            ></div>
+
+
+            <!-- Editor footer -->
+
+            <div class="editor-footer">
+
+              <div class="editor-status-left">
+
+                <span id="wordCount">
+                  0 words
+                </span>
+
+                <span class="editor-footer-divider">
+                  •
+                </span>
+
+                <span id="charCount">
+                  0 characters
+                </span>
+
+              </div>
+
+              <div class="editor-status-right">
+                <span>
+                  Autosave protection enabled
+                </span>
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- =================================================
+               COVER IMAGE
+               ================================================= -->
+
+          <div class="editor-card">
+
+            <div class="editor-section-heading">
+
+              <div>
+
+                <div class="editor-card-label">
+                  Cover image
+                </div>
+
+                <div class="editor-card-help">
+                  This image appears as the main image for the article.
+                </div>
+
+              </div>
+
+            </div>
+
+
+            <div class="cover-upload-layout">
+
+              <div
+                id="coverPreview"
+                class="cover-preview <%= post.cover_url ? 'has-image' : '' %>"
+              >
+
+                <% if (post.cover_url) { %>
+
+                  <img
+                    src="<%= post.cover_url %>"
+                    alt="Cover preview"
+                  >
+
+                <% } else { %>
+
+                  <div class="cover-empty">
+
+                    <svg viewBox="0 0 24 24">
+                      <path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2Zm0 16H5V5h14v14ZM8.5 13.5l2-2 2.5 3 1.5-2 2.5 3H7l1.5-2Z"/>
+                    </svg>
+
+                    <span>
+                      No cover image
+                    </span>
+
+                  </div>
+
+                <% } %>
+
+              </div>
+
+
+              <div class="cover-upload-controls">
+
+                <input
+                  type="hidden"
+                  name="cover_url"
+                  id="coverUrl"
+                  value="<%= post.cover_url || '' %>"
+                >
+
+                <label
+                  class="upload-dropzone"
+                  for="coverImage"
+                  id="coverDropzone"
+                >
+
+                  <input
+                    type="file"
+                    id="coverImage"
+                    accept="image/jpeg,image/png,image/webp,image/gif"
+                    hidden
+                  >
+
+                  <span class="upload-icon">
+
+                    <svg viewBox="0 0 24 24">
+                      <path d="M19 13v6H5v-6H3v6a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-6h-2ZM13 3h-2v8.2L8.4 8.6 7 10l5 5 5-5-1.4-1.4-2.6 2.6V3Z"/>
+                    </svg>
+
+                  </span>
+
+                  <strong>
+                    Upload cover image
+                  </strong>
+
+                  <span>
+                    JPG, PNG, WebP or GIF · Max 5 MB
+                  </span>
+
+                </label>
+
+                <div
+                  id="coverUploadStatus"
+                  class="upload-status"
+                ></div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- =================================================
+               ARTICLE IMAGE INFO
+               ================================================= -->
+
+          <div class="editor-info-banner">
+
+            <div class="info-banner-icon">
+              <svg viewBox="0 0 24 24">
+                <path d="M11 17h2v-6h-2v6Zm1-15a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm0 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16Zm-1-11h2V7h-2v2Z"/>
+              </svg>
+            </div>
+
+            <div>
+              <strong>Adding images inside the article</strong>
+              <p>
+                Use the image button in the editor toolbar. Images are uploaded directly to your website and inserted into the article.
+              </p>
+            </div>
+
+          </div>
+
+
+          <!-- =================================================
+               SEO
+               ================================================= -->
+
+          <div class="editor-card">
+
+            <div class="editor-section-heading">
+
+              <div>
+
+                <div class="editor-card-label">
+                  SEO & URL
+                </div>
+
+                <div class="editor-card-help">
+                  Optional settings for search engines and sharing.
+                </div>
+
+              </div>
+
+            </div>
+
+
+            <div class="seo-grid">
+
+              <div class="editor-field seo-field-wide">
+
+                <label for="slug">
+                  URL slug
+                </label>
+
+                <div class="slug-input-wrap">
+
+                  <span class="slug-prefix">
+                    /post/
+                  </span>
+
+                  <input
+                    id="slug"
+                    name="slug"
+                    type="text"
+                    value="<%= post.slug || '' %>"
+                    placeholder="article-slug"
+                    maxlength="180"
+                    dir="ltr"
+                  >
+
+                </div>
+
+              </div>
+
+              <div class="editor-field">
+
+                <label for="downloadUrl">
+                  PDF / document URL
+                </label>
+
+                <input
+                  id="downloadUrl"
+                  name="download_url"
+                  type="url"
+                  value="<%= post.download_url || '' %>"
+                  placeholder="https://..."
+                  dir="ltr"
+                >
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- =================================================
+             SIDEBAR
+             ================================================= -->
+
+        <aside class="editor-sidebar">
+
+
+          <!-- Publish -->
+
+          <div class="editor-side-card publish-card">
+
+            <div class="side-card-heading">
+
+              <div class="side-card-icon publish-icon">
+                <svg viewBox="0 0 24 24">
+                  <path d="m12 3 9 5-9 5-9-5 9-5Zm-7.4 9.5L12 16.3l7.4-3.8L21 13.7l-9 4.7-9-4.7 1.6-1.2ZM4.6 16.5 12 20.3l7.4-3.8L21 17.7l-9 4.7-9-4.7 1.6-1.2Z"/>
+                </svg>
+              </div>
+
+              <div>
+                <h2>Publish</h2>
+                <p>Control how this article appears.</p>
+              </div>
+
+            </div>
+
+
+            <div class="editor-field">
+
+              <label for="status">
+                Status
+              </label>
+
+              <select
+                id="status"
+                name="status"
+              >
+
+                <option
+                  value="draft"
+                  <%= post.status === 'draft' ? 'selected' : '' %>
+                >
+                  Draft
+                </option>
+
+                <option
+                  value="published"
+                  <%= post.status === 'published' ? 'selected' : '' %>
+                >
+                  Published
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div class="publish-status-indicator">
+              <span></span>
+              <strong id="publishStatusText">
+                <%= post.status === 'published'
+                  ? 'Visible to readers'
+                  : 'Only available as a draft'
+                %>
+              </strong>
+            </div>
+
+
+            <button
+              type="submit"
+              class="primary-publish-btn"
+              id="savePostButton"
+            >
+
+              <svg viewBox="0 0 24 24">
+                <path d="M17 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7l-4-4Zm-5 17a3 3 0 1 1 0-6 3 3 0 0 1 0 6ZM6 5h8v4H6V5Zm11 14h-2v-4H9v4H7V5h7.2L17 7.8V19Z"/>
+              </svg>
+
+              <span>
+                <%= post.status === 'published'
+                  ? 'Save & publish'
+                  : 'Save draft'
+                %>
+              </span>
+
+            </button>
+
+          </div>
+
+
+          <!-- Classification -->
+
+          <div class="editor-side-card">
+
+            <div class="side-card-heading">
+
+              <div class="side-card-icon">
+                <svg viewBox="0 0 24 24">
+                  <path d="M4 4h7v7H4V4Zm9 0h7v7h-7V4ZM4 13h7v7H4v-7Zm9 0h7v7h-7v-7Z"/>
+                </svg>
+              </div>
+
+              <div>
+                <h2>Classification</h2>
+                <p>Organise your article.</p>
+              </div>
+
+            </div>
+
+
+            <div class="editor-field">
+
+              <label for="section">
+                Section
+              </label>
+
+              <select
+                id="section"
+                name="section"
+              >
+
+                <% sections.forEach(function(section) { %>
+
+                  <option
+                    value="<%= section.slug %>"
+                    <%= post.section === section.slug ? 'selected' : '' %>
+                  >
+                    <%= section.label %>
+                  </option>
+
+                <% }) %>
+
+              </select>
+
+            </div>
+
+
+            <div class="editor-field">
+
+              <label>
+                Main language
+              </label>
+
+              <div class="language-options">
+
+                <label class="language-option">
+
+                  <input
+                    type="radio"
+                    name="lang"
+                    value="ur"
+                    <%= post.lang !== 'ar' ? 'checked' : '' %>
+                  >
+
+                  <span class="language-radio"></span>
+
+                  <span>
+                    <strong>اردو</strong>
+                    <small>Urdu · Nastaliq</small>
+                  </span>
+
+                </label>
+
+
+                <label class="language-option">
+
+                  <input
+                    type="radio"
+                    name="lang"
+                    value="ar"
+                    <%= post.lang === 'ar' ? 'checked' : '' %>
+                  >
+
+                  <span class="language-radio"></span>
+
+                  <span>
+                    <strong>العربية</strong>
+                    <small>Arabic · Naskh</small>
+                  </span>
+
+                </label>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- Summary -->
+
+          <div class="editor-side-card">
+
+            <div class="side-card-heading">
+
+              <div class="side-card-icon">
+                <svg viewBox="0 0 24 24">
+                  <path d="M4 5h16v2H4V5Zm0 6h16v2H4v-2Zm0 6h11v2H4v-2Z"/>
+                </svg>
+              </div>
+
+              <div>
+                <h2>Summary</h2>
+                <p>Shown in article listings.</p>
+              </div>
+
+            </div>
+
+
+            <div class="editor-field">
+
+              <label for="excerpt">
+                Short summary
+              </label>
+
+              <textarea
+                id="excerpt"
+                name="excerpt"
+                maxlength="400"
+                rows="5"
+                placeholder="Write a short description..."
+              ><%= post.excerpt || '' %></textarea>
+
+              <div class="field-counter">
+                <span id="excerptCount">
+                  <%= (post.excerpt || '').length %>
+                </span>
+                / 400
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- Delete -->
+
+          <% if (post.id) { %>
+
+            <div class="danger-zone">
+
+              <div>
+                <strong>Delete article</strong>
+
+                <p>
+                  This action cannot be undone.
+                </p>
+              </div>
+
+              <button
+                type="submit"
+                form="deleteForm"
+                class="danger-btn"
+              >
+                Delete
+              </button>
+
+            </div>
+
+          <% } %>
+
+
+        </aside>
+
+      </div>
+
+    </form>
+
+
+    <% if (post.id) { %>
+
+      <form
+        id="deleteForm"
+        method="post"
+        action="<%= adminBase %>/posts/<%= post.id %>/delete"
+        onsubmit="return confirm('Delete this article permanently?');"
+      >
+
+        <input
+          type="hidden"
+          name="_csrf"
+          value="<%= csrf %>"
+        >
+
+      </form>
+
+    <% } %>
+
+  </main>
+
+</div>
+
+
+<script
+  src="<%= asset('/vendor/quill/quill.min.js') %>"
+></script>
+
+<script
+  src="<%= asset('/js/admin-editor.js') %>"
+  defer
+></script>
+
+<script
+  src="<%= asset('/js/main.js') %>"
+  defer
+></script>
+
 </body>
 </html>

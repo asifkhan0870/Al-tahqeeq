@@ -1,17 +1,330 @@
-<%- include('../partials/head') %>
-<main class="login-wrap" dir="ltr">
-  <form class="login-card" method="post" action="<%= adminBase %>/login" autocomplete="off">
-    <h1>Admin login</h1>
-    <p class="muted">Only the site owner can write, edit or delete posts.</p>
-    <% if (locals.error) { %><p class="alert alert-error" role="alert"><%= error %></p><% } %>
-    <label for="password">Password</label>
-    <input id="password" name="password" type="password" required autofocus autocomplete="current-password">
-    <label class="check"><input type="checkbox" name="remember"> Keep me logged in for 30 days on this device</label>
-    <button class="btn btn-primary" type="submit">Log in</button>
-    <p class="back"><a href="/">&larr; Back to the website</a></p>
-  </form>
-  <div class="login-theme"><%- include('../partials/theme-toggle') %></div>
+<%-
+  include('../partials/head')
+%>
+
+<main class="admin-login-page" dir="ltr">
+
+  <div class="admin-login-bg">
+    <div class="admin-login-orb admin-login-orb-1"></div>
+    <div class="admin-login-orb admin-login-orb-2"></div>
+  </div>
+
+  <section class="admin-login-shell">
+
+    <!-- Brand -->
+    <div class="admin-login-brand">
+
+      <div class="admin-login-logo">
+        <span>ق</span>
+      </div>
+
+      <div>
+        <div class="admin-login-brand-name">
+          القول المبين
+        </div>
+
+        <div class="admin-login-brand-sub">
+          Research & Publishing
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Card -->
+    <div class="admin-login-card">
+
+      <div class="admin-login-heading">
+
+        <div class="admin-login-badge">
+          <svg
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path
+              d="M12 2a7 7 0 0 0-7 7v3.2A4.8 4.8 0 0 0 2 16.7V18a4 4 0 0 0 4 4h2v-8H6a5 5 0 0 0-1 .1V9a7 7 0 0 1 14 0v5.1a5 5 0 0 0-1-.1h-2v8h2a4 4 0 0 0 4-4v-1.3a4.8 4.8 0 0 0-3-4.5V9a7 7 0 0 0-7-7Z"
+            />
+          </svg>
+        </div>
+
+        <div>
+          <h1>Admin Portal</h1>
+          <p>
+            Sign in to manage your publications
+          </p>
+        </div>
+
+      </div>
+
+      <% if (locals.error) { %>
+
+        <div
+          class="admin-login-error"
+          role="alert"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path
+              d="M12 3 2.8 20h18.4L12 3Zm0 5.2 5.8 10.6H6.2L12 8.2Zm-1 3v4h2v-4h-2Zm0 5v2h2v-2h-2Z"
+            />
+          </svg>
+
+          <span>
+            <%= error %>
+          </span>
+        </div>
+
+      <% } %>
+
+      <form
+        class="admin-login-form"
+        method="post"
+        action="<%= adminBase %>/login"
+        autocomplete="on"
+      >
+
+        <!-- Username -->
+
+        <div class="admin-field">
+
+          <label
+            for="username"
+          >
+            Username
+          </label>
+
+          <div class="admin-input-wrap">
+
+            <svg
+              class="admin-input-icon"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path
+                d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm0 2c-4.4 0-8 2.2-8 5v1h16v-1c0-2.8-3.6-5-8-5Z"
+              />
+            </svg>
+
+            <input
+              id="username"
+              name="username"
+              type="text"
+              required
+              autofocus
+              autocomplete="username"
+              placeholder="Enter your username"
+              spellcheck="false"
+            >
+
+          </div>
+
+        </div>
+
+        <!-- Password -->
+
+        <div class="admin-field">
+
+          <div class="admin-label-row">
+
+            <label
+              for="password"
+            >
+              Password
+            </label>
+
+          </div>
+
+          <div class="admin-input-wrap">
+
+            <svg
+              class="admin-input-icon"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path
+                d="M17 9h-1V7a4 4 0 0 0-8 0v2H7a3 3 0 0 0-3 3v6a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-6a3 3 0 0 0-3-3Zm-7-2a2 2 0 0 1 4 0v2h-4V7Zm7 11H7v-6h10v6Z"
+              />
+            </svg>
+
+            <input
+              id="password"
+              name="password"
+              type="password"
+              required
+              autocomplete="current-password"
+              placeholder="Enter your password"
+            >
+
+            <button
+              type="button"
+              class="admin-password-toggle"
+              id="passwordToggle"
+              aria-label="Show password"
+              title="Show password"
+            >
+
+              <svg
+                class="eye-open"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  d="M12 5c-5.5 0-9.5 5-10 7 .5 2 4.5 7 10 7s9.5-5 10-7c-.5-2-4.5-7-10-7Zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10Zm0-2.5A2.5 2.5 0 1 0 12 9a2.5 2.5 0 0 0 0 5.5Z"
+                />
+              </svg>
+
+              <svg
+                class="eye-closed"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  d="m3 4.4 16.6 16.6 1.4-1.4-2.1-2.1c1.9-1.5 3.1-3.4 3.8-5.5-1.4-4.2-5.5-7-10.7-7-1.4 0-2.7.2-3.9.7L4.4 3 3 4.4Zm9 4.1a3.5 3.5 0 0 1 3.5 3.5c0 .4-.1.8-.2 1.2l-4.5-4.5c.4-.1.8-.2 1.2-.2ZM2.8 7.8 5 10c-.8 1-1.5 2-1.9 3 1.4 4.2 5.5 7 10.7 7 1.9 0 3.7-.4 5.2-1.1l2 2 1.4-1.4L4.2 6.4 2.8 7.8Z"
+                />
+              </svg>
+
+            </button>
+
+          </div>
+
+        </div>
+
+        <!-- Remember -->
+
+        <label class="admin-remember">
+
+          <input
+            type="checkbox"
+            name="remember"
+          >
+
+          <span class="admin-checkbox"></span>
+
+          <span>
+            Keep me signed in for 30 days
+          </span>
+
+        </label>
+
+        <!-- Submit -->
+
+        <button
+          class="admin-login-submit"
+          type="submit"
+        >
+
+          <span>
+            Sign in to dashboard
+          </span>
+
+          <svg
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path
+              d="M13.2 5.3 11.8 6.7 16.1 11H4v2h12.1l-4.3 4.3 1.4 1.4 6.7-6.7-6.7-6.7Z"
+            />
+          </svg>
+
+        </button>
+
+      </form>
+
+      <div class="admin-login-divider">
+        <span>SECURE ADMINISTRATION</span>
+      </div>
+
+      <div class="admin-login-footer">
+
+        <span class="admin-security-dot"></span>
+
+        <span>
+          Protected administrator access
+        </span>
+
+      </div>
+
+    </div>
+
+    <!-- Back -->
+
+    <a
+      class="admin-back-link"
+      href="/"
+    >
+      <svg
+        viewBox="0 0 24 24"
+        aria-hidden="true"
+      >
+        <path
+          d="m10 6-6 6 6 6 1.4-1.4L7.8 13H20v-2H7.8l3.6-3.6L10 6Z"
+        />
+      </svg>
+
+      <span>
+        Back to website
+      </span>
+    </a>
+
+    <div class="admin-login-theme">
+      <%- include('../partials/theme-toggle') %>
+    </div>
+
+  </section>
+
 </main>
-<script src="<%= asset('/js/main.js') %>" defer></script>
+
+<script>
+  (() => {
+    const password =
+      document.getElementById('password');
+
+    const toggle =
+      document.getElementById(
+        'passwordToggle'
+      );
+
+    if (!password || !toggle) return;
+
+    toggle.addEventListener(
+      'click',
+      () => {
+        const showing =
+          password.type === 'text';
+
+        password.type =
+          showing
+            ? 'password'
+            : 'text';
+
+        toggle.setAttribute(
+          'aria-label',
+          showing
+            ? 'Show password'
+            : 'Hide password'
+        );
+
+        toggle.setAttribute(
+          'title',
+          showing
+            ? 'Show password'
+            : 'Hide password'
+        );
+
+        toggle.classList.toggle(
+          'is-visible',
+          !showing
+        );
+      }
+    );
+  })();
+</script>
+
+<script
+  src="<%= asset('/js/main.js') %>"
+  defer
+></script>
+
 </body>
 </html>
